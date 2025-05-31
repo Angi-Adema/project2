@@ -43,4 +43,27 @@ public class AccountController {
         }
 
     }
+
+    // POST request to login a user. (http://localhost:8080/login)
+    @PostMapping("login")
+    public ResponseEntity<?> login(@RequestBody Account account) {
+
+        // Validate the account details
+        if (account.getUsername() == null || account.getUsername().isBlank()) {
+            return ResponseEntity.badRequest().body("Username cannot be blank");
+        }
+        if (account.getPassword() == null || account.getPassword().length() < 4) {
+            return ResponseEntity.badRequest().body("Password must be at least 4 characters long");
+        }
+
+        // Attempt to log in using the service
+        Account loggedIn = accountService.login(account.getUsername(), account.getPassword());
+        
+        if (loggedIn != null) {
+            return ResponseEntity.ok(loggedIn);
+        } else {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
+    }
+    
 }
