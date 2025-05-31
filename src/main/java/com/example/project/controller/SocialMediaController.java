@@ -1,4 +1,4 @@
-package controller;
+package com.example.project.controller;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
