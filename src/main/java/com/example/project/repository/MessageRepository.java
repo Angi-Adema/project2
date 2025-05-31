@@ -6,7 +6,6 @@ import com.example.project.entity.Message;
 
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
-    
 }
 
 

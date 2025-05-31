@@ -1,10 +1,12 @@
-package com.example;
+package com.example.project;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -13,9 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 
+import com.example.project.entity.Message;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DeleteMessageByMessageIdTest {
+public class RetrieveAllMessagesForUserTest {
 	ApplicationContext app;
     HttpClient webClient;
     ObjectMapper objectMapper;
@@ -41,43 +45,43 @@ public class DeleteMessageByMessageIdTest {
     }
     
     /**
-     * Sending an http request to DELETE localhost:8080/messages/1 (message exists)
+     * Sending an http request to GET localhost:8080/accounts/9999/messages (messages exist for user) 
      * 
      * Expected Response:
      *  Status Code: 200
-     *  Response Body: count of rows modified (should only modify a single row)
+     *  Response Body: JSON representation of a list of messages
      */
     @Test
-    public void deleteMessageGivenMessageIdMessageFound() throws IOException, InterruptedException {
+    public void getAllMessagesFromUserMessageExists() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/messages/9999"))
-                .DELETE()
+                .uri(URI.create("http://localhost:8080/accounts/9999/messages"))
                 .build();
         HttpResponse<String> response = webClient.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         Assertions.assertEquals(200, status, "Expected Status Code 200 - Actual Code was: " + status);
-        Integer actualResult = objectMapper.readValue(response.body().toString(), Integer.class);
-        Assertions.assertTrue(actualResult.equals(1), "Expected to modify 1 row, but actually modified " + actualResult + " rows.");
+        List<Message> expectedResult = new ArrayList<Message>();
+        expectedResult.add(new Message(9999, 9999, "test message 1", 1669947792L));
+        List<Message> actualResult = objectMapper.readValue(response.body().toString(), new TypeReference<List<Message>>(){});
+        Assertions.assertEquals(expectedResult, actualResult, "Expected="+expectedResult + ", Actual="+actualResult);
     }
-
+    
     /**
-     * Sending an http request to DELETE localhost:8080/messages/100 (message does NOT exists)
+     * Sending an http request to GET localhost:8080/accounts/9998/messages (messages does NOT exist for user) 
      * 
      * Expected Response:
      *  Status Code: 200
      *  Response Body: 
      */
     @Test
-    public void deleteMessageGivenMessageIdMessageNotFound() throws IOException, InterruptedException {
+    public void getAllMessagesFromUserNoMessagesFound() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/messages/100"))
-                .DELETE()
+                .uri(URI.create("http://localhost:8080/accounts/9998/messages"))
                 .build();
         HttpResponse<String> response = webClient.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         Assertions.assertEquals(200, status, "Expected Status Code 200 - Actual Code was: " + status);
-        String actualResult = response.body().toString();
-        Assertions.assertTrue(actualResult.equals(""), "Expected empty response body, but actually " + actualResult + ".");
+        List<Message> actualResult = objectMapper.readValue(response.body().toString(), new TypeReference<List<Message>>(){});
+        Assertions.assertTrue(actualResult.isEmpty(), "Expected Empty Result, but Result was not Empty");
     }
 }
 

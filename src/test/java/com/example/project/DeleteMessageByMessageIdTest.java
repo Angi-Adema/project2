@@ -1,12 +1,10 @@
-package com.example;
+package com.example.project;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -15,11 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 
-import com.example.entity.Message;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class RetrieveAllMessagesForUserTest {
+public class DeleteMessageByMessageIdTest {
 	ApplicationContext app;
     HttpClient webClient;
     ObjectMapper objectMapper;
@@ -45,43 +41,43 @@ public class RetrieveAllMessagesForUserTest {
     }
     
     /**
-     * Sending an http request to GET localhost:8080/accounts/9999/messages (messages exist for user) 
+     * Sending an http request to DELETE localhost:8080/messages/1 (message exists)
      * 
      * Expected Response:
      *  Status Code: 200
-     *  Response Body: JSON representation of a list of messages
+     *  Response Body: count of rows modified (should only modify a single row)
      */
     @Test
-    public void getAllMessagesFromUserMessageExists() throws IOException, InterruptedException {
+    public void deleteMessageGivenMessageIdMessageFound() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/accounts/9999/messages"))
+                .uri(URI.create("http://localhost:8080/messages/9999"))
+                .DELETE()
                 .build();
         HttpResponse<String> response = webClient.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         Assertions.assertEquals(200, status, "Expected Status Code 200 - Actual Code was: " + status);
-        List<Message> expectedResult = new ArrayList<Message>();
-        expectedResult.add(new Message(9999, 9999, "test message 1", 1669947792L));
-        List<Message> actualResult = objectMapper.readValue(response.body().toString(), new TypeReference<List<Message>>(){});
-        Assertions.assertEquals(expectedResult, actualResult, "Expected="+expectedResult + ", Actual="+actualResult);
+        Integer actualResult = objectMapper.readValue(response.body().toString(), Integer.class);
+        Assertions.assertTrue(actualResult.equals(1), "Expected to modify 1 row, but actually modified " + actualResult + " rows.");
     }
-    
+
     /**
-     * Sending an http request to GET localhost:8080/accounts/9998/messages (messages does NOT exist for user) 
+     * Sending an http request to DELETE localhost:8080/messages/100 (message does NOT exists)
      * 
      * Expected Response:
      *  Status Code: 200
      *  Response Body: 
      */
     @Test
-    public void getAllMessagesFromUserNoMessagesFound() throws IOException, InterruptedException {
+    public void deleteMessageGivenMessageIdMessageNotFound() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/accounts/9998/messages"))
+                .uri(URI.create("http://localhost:8080/messages/100"))
+                .DELETE()
                 .build();
         HttpResponse<String> response = webClient.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         Assertions.assertEquals(200, status, "Expected Status Code 200 - Actual Code was: " + status);
-        List<Message> actualResult = objectMapper.readValue(response.body().toString(), new TypeReference<List<Message>>(){});
-        Assertions.assertTrue(actualResult.isEmpty(), "Expected Empty Result, but Result was not Empty");
+        String actualResult = response.body().toString();
+        Assertions.assertTrue(actualResult.equals(""), "Expected empty response body, but actually " + actualResult + ".");
     }
 }
 

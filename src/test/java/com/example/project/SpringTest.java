@@ -1,12 +1,13 @@
-package com.example;
+package com.example.project;
 
-import com.example.controller.SocialMediaController;
-import com.example.entity.Account;
-import com.example.entity.Message;
-import com.example.repository.AccountRepository;
-import com.example.repository.MessageRepository;
-import com.example.service.AccountService;
-import com.example.service.MessageService;
+import com.example.project.controller.SocialMediaController;
+import com.example.project.entity.Account;
+import com.example.project.entity.Message;
+import com.example.project.repository.AccountRepository;
+import com.example.project.repository.MessageRepository;
+import com.example.project.service.AccountService;
+import com.example.project.service.MessageService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

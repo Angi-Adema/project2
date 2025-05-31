@@ -1,5 +1,7 @@
 package com.example.project.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,14 @@ public class MessageService {
             return null;
         }
         return messageRepository.save(message);
+    }
+
+    public List<Message> getAllMessages() {
+        return messageRepository.findAll();
+    }
+
+    public Message getMessageById(Integer messageId) {
+        return messageRepository.findById(messageId).orElse(null);
     }
 }
 
