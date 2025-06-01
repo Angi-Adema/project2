@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,5 +96,13 @@ public class MessageController {
         } else {
             return ResponseEntity.ok(1);
         }
+    }
+
+    // GET request messages from user given account ID. (http://localhost:8080/accounts/{accountId}/messages)
+    @GetMapping("accounts/{accountId}/messages")
+    public ResponseEntity<?> getMessagesByAccountId(@PathVariable Integer accountId) {
+        List<Message> accountMessages = messageService.getMessagesByAccountId(accountId);
+
+        return ResponseEntity.ok(accountMessages);
     }
 }
