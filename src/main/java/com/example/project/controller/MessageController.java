@@ -57,7 +57,7 @@ public class MessageController {
     public ResponseEntity<?> getMessageById(@PathVariable Integer messageId) {
         Message message = messageService.getMessageById(messageId);
         if (message == null) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("");
         }
         return ResponseEntity.ok(message);
     }
