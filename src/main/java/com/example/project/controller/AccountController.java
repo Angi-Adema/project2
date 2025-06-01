@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.entity.Account;
 import com.example.project.service.AccountService;
 
-// Handle register, login and looking up accounts by id.
+// Handle register and login.
 
 @RestController
 public class AccountController {
