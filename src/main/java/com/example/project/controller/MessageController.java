@@ -1,9 +1,12 @@
 package com.example.project.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,6 +75,25 @@ public class MessageController {
             return ResponseEntity.ok(1);
         } else {
             return ResponseEntity.ok("");
+        }
+    }
+
+    // PATCH request to update a message by ID. (http://localhost:8080/messages/{message_id})
+    @PatchMapping("messages/{messageId}")
+    public ResponseEntity<?> updateMessageText(@PathVariable Integer messageId, @RequestBody Map<String, String> updates) {
+        
+        String newText = updates.get("messageText");
+        
+        if (newText == null || newText.isBlank() || newText.length() >= 255) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        boolean updated = messageService.updateMessageTextById(messageId, newText);
+
+        if (!updated) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(1);
         }
     }
 }

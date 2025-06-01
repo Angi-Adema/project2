@@ -1,6 +1,7 @@
 package com.example.project.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,18 @@ public class MessageService {
         } else {
             return false;
         }
+    }
+
+    public boolean updateMessageTextById(Integer messageId, String newText) {
+        Optional<Message> optional = messageRepository.findById(messageId);
+
+        if (optional.isPresent()) {
+            Message message = optional.get();
+            message.setMessageText(newText);
+            messageRepository.save(message);
+            return true;
+        }
+        return false;
     }
 }
 
