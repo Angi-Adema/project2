@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,5 +61,17 @@ public class MessageController {
             return ResponseEntity.ok("");
         }
         return ResponseEntity.ok(message);
+    }
+
+    // DELETE a message by ID. (http://localhost:8080/messages/{message_id})
+    @DeleteMapping("messages/{messageId}")
+    public ResponseEntity<?> deleteMessageById(@PathVariable Integer messageId) {
+        boolean deleted = messageService.deleteMessageById(messageId);
+
+        if (deleted) {
+            return ResponseEntity.ok(1);
+        } else {
+            return ResponseEntity.ok("");
+        }
     }
 }
