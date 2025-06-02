@@ -1,4 +1,4 @@
-CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START WITH 10000 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START WITH 1 INCREMENT BY 1;
 
 drop table if exists message;
 drop table if exists account;

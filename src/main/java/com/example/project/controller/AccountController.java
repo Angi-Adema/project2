@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.project.entity.Account;
+import com.example.project.exception.DuplicateUsernameException;
 import com.example.project.service.AccountService;
 
 // Handle register and login.
@@ -33,14 +34,21 @@ public class AccountController {
             return ResponseEntity.badRequest().body("Password must be at least 4 characters long");
         }
 
-        // Register the account using the service
-        Account registered = accountService.registerAccount(account);
-        
-        if (registered != null) {
+        try {
+            Account registered = accountService.registerAccount(account);
             return ResponseEntity.ok(registered);
-        } else {
+        } catch (DuplicateUsernameException ex) {
             return ResponseEntity.status(409).body("Username already exists");
         }
+
+        // Register the account using the service
+        // Account registered = accountService.registerAccount(account);
+        
+        // if (registered != null) {
+        //     return ResponseEntity.ok(registered);
+        // } else {
+        //     return ResponseEntity.status(409).body("Username already exists");
+        // }
 
     }
 
